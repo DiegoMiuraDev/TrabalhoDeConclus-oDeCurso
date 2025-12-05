@@ -76,10 +76,8 @@ class HandDetector:
         if not results.multi_hand_landmarks:
             return None, None, None
         
-        # Pega primeira mão detectada
         hand_landmarks = results.multi_hand_landmarks[0]
         
-        # Calcula bounding box
         h, w = frame.shape[:2]
         x_coords = [landmark.x * w for landmark in hand_landmarks.landmark]
         y_coords = [landmark.y * h for landmark in hand_landmarks.landmark]
@@ -87,7 +85,6 @@ class HandDetector:
         x_min, x_max = int(min(x_coords)), int(max(x_coords))
         y_min, y_max = int(min(y_coords)), int(max(y_coords))
         
-        # Adiciona margem de 20%
         margin_x = int((x_max - x_min) * 0.2)
         margin_y = int((y_max - y_min) * 0.2)
         
@@ -96,7 +93,6 @@ class HandDetector:
         x_max = min(w, x_max + margin_x)
         y_max = min(h, y_max + margin_y)
         
-        # Recorta região da mão
         roi = frame[y_min:y_max, x_min:x_max]
         
         if roi.size == 0:
@@ -650,7 +646,6 @@ class LibrasDesktopAppImproved:
     
     def start_camera(self):
         """Inicia a captura de vídeo"""
-        # Aceita Keras (.h5) ou TFLite (Interpreter)
         has_keras = (self.use_keras and self.keras_model is not None)
         has_tflite = (not self.use_keras and self.interpreter is not None)
         if not (has_keras or has_tflite):
@@ -660,18 +655,15 @@ class LibrasDesktopAppImproved:
             )
             return
         
-        # Atualiza índice da câmera baseado na seleção
         self.on_camera_selected()
         
         try:
-            # Otimizações OpenCV
             try:
                 cv2.setUseOptimized(True)
                 cv2.setNumThreads(0)
             except Exception:
                 pass
 
-            # Usa o índice da câmera selecionada
             self.cap = cv2.VideoCapture(self.camera_index)
             if not self.cap.isOpened():
                 messagebox.showerror(
@@ -688,7 +680,7 @@ class LibrasDesktopAppImproved:
             self.is_running = True
             self.start_btn.config(state=tk.DISABLED)
             self.stop_btn.config(state=tk.NORMAL)
-            self.camera_combo.config(state=tk.DISABLED)  # Desabilita durante uso
+            self.camera_combo.config(state=tk.DISABLED)  
             self.status_label.config(text=f"Câmera {self.camera_index} ativa - posicione sua mão na frente da câmera")
             
             self.update_video()
