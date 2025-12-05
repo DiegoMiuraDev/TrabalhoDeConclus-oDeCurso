@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+                      
 """
 Script para coletar dados de teste usando webcam (versão com debug)
 Organiza as imagens por classe (A, E, I, O, U) para avaliação posterior
@@ -12,12 +12,12 @@ from pathlib import Path
 import time
 import traceback
 
-# Configurações
+               
 TEST_DATA_DIR = "dataset/test_images"
 IMAGE_SIZE = 224
 CLASSES = ["A", "E", "I", "O", "U"]
 
-# Função para log
+                 
 def log(message):
     """Escreve mensagem no console e no arquivo de log"""
     print(message, flush=True)
@@ -30,10 +30,10 @@ class TestDataCollector:
         self.current_class = 0
         self.image_count = {cls: 0 for cls in CLASSES}
         self.collecting = False
-        self.save_interval = 0.5  # Salvar a cada 0.5 segundos
+        self.save_interval = 0.5                              
         self.last_save_time = {cls: 0 for cls in CLASSES}
         
-        # Criar diretórios
+                          
         self.test_dir = Path(TEST_DATA_DIR)
         for cls in CLASSES:
             (self.test_dir / cls).mkdir(parents=True, exist_ok=True)
@@ -51,17 +51,17 @@ class TestDataCollector:
         """Inicia a câmera"""
         log("Tentando abrir câmera...")
         
-        # Tentar diferentes índices de câmera
+                                             
         for camera_index in [0, 1, 2]:
             log(f"Tentando câmera índice {camera_index}...")
             self.cap = cv2.VideoCapture(camera_index)
             
             if self.cap.isOpened():
-                # Testar se consegue ler um frame
+                                                 
                 ret, frame = self.cap.read()
                 if ret and frame is not None:
                     log(f"✅ Câmera {camera_index} funcionando! Dimensões: {frame.shape}")
-                    # Configurar resolução
+                                          
                     self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
                     self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
                     return
@@ -81,7 +81,7 @@ class TestDataCollector:
     
     def preprocess_image(self, frame):
         """Pré-processa frame para salvar"""
-        # Redimensionar
+                       
         img = cv2.resize(frame, (IMAGE_SIZE, IMAGE_SIZE))
         return img
     
@@ -89,21 +89,21 @@ class TestDataCollector:
         """Salva imagem na pasta da classe"""
         current_time = time.time()
         
-        # Verificar intervalo mínimo
+                                    
         if current_time - self.last_save_time[class_name] < self.save_interval:
             return False
         
         self.last_save_time[class_name] = current_time
         
-        # Pré-processar
+                       
         img = self.preprocess_image(frame)
         
-        # Gerar nome do arquivo
+                               
         count = self.image_count[class_name]
         filename = f"{class_name}_{count:04d}.jpg"
         filepath = self.test_dir / class_name / filename
         
-        # Salvar
+                
         success = cv2.imwrite(str(filepath), img)
         if success:
             self.image_count[class_name] += 1
@@ -133,43 +133,43 @@ class TestDataCollector:
                 if frame_count == 1:
                     log(f"✅ Primeiro frame lido com sucesso! Dimensões: {frame.shape}")
                 
-                # Espelhar frame (mais natural)
+                                               
                 frame = cv2.flip(frame, 1)
                 
-                # Obter classe atual
+                                    
                 class_name = CLASSES[self.current_class]
                 
-                # Status na tela
+                                
                 status_text = f"Classe: {class_name} | Coletando: {'SIM' if self.collecting else 'NÃO'}"
                 count_text = f"Imagens salvas: {self.image_count[class_name]}"
                 
-                # Desenhar informações
+                                      
                 cv2.putText(frame, status_text, (10, 30), 
                            cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
                 cv2.putText(frame, count_text, (10, 60), 
                            cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 0), 2)
                 
-                # Instruções
+                            
                 cv2.putText(frame, "1-5: Classe | ESPACO: Coletar | Q: Sair", 
                            (10, frame.shape[0] - 20),
                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
                 
-                # Retângulo indicando classe
+                                            
                 color = (0, 255, 0) if self.collecting else (0, 0, 255)
                 cv2.rectangle(frame, (10, 80), (200, 120), color, 2)
                 cv2.putText(frame, class_name, (20, 110), 
                            cv2.FONT_HERSHEY_SIMPLEX, 1, color, 2)
                 
-                # Salvar se coletando
+                                     
                 if self.collecting:
                     if self.save_image(frame, class_name):
-                        # Feedback visual
+                                         
                         cv2.circle(frame, (frame.shape[1] - 30, 30), 10, (0, 255, 0), -1)
                 
-                # Mostrar frame
+                               
                 cv2.imshow('Coletor de Dados de Teste', frame)
                 
-                # Processar teclas
+                                  
                 key = cv2.waitKey(1) & 0xFF
                 
                 if key == ord('q'):
@@ -234,7 +234,7 @@ class TestDataCollector:
 
 
 if __name__ == "__main__":
-    # Limpar log anterior
+                         
     if os.path.exists("collect_test_data.log"):
         os.remove("collect_test_data.log")
     

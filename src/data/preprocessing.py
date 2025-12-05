@@ -38,10 +38,10 @@ class ImagePreprocessor:
             np.ndarray: Imagens RGB (N, H, W, 3)
         """
         if len(images.shape) == 3:
-            # Adicionar dimensão de canal
+                                         
             images = np.expand_dims(images, axis=-1)
         
-        # Repetir canal para criar RGB
+                                      
         rgb_images = np.repeat(images, 3, axis=-1)
         
         print(f"🔄 Convertido para RGB: {images.shape} -> {rgb_images.shape}")
@@ -68,9 +68,9 @@ class ImagePreprocessor:
         
         resized_images = []
         for img in images:
-            if len(img.shape) == 2:  # Grayscale
+            if len(img.shape) == 2:             
                 resized = cv2.resize(img, target_size, interpolation=cv2.INTER_AREA)
-            else:  # RGB
+            else:       
                 resized = cv2.resize(img, target_size, interpolation=cv2.INTER_AREA)
             resized_images.append(resized)
         
@@ -92,14 +92,14 @@ class ImagePreprocessor:
         Returns:
             np.ndarray: Imagens normalizadas
         """
-        # Converter para float32
+                                
         images = images.astype('float32')
         
-        # Normalizar para [0, 1] se necessário
+                                              
         if images.max() > 1.0:
             images = images / 255.0
         
-        # Ajustar para o range desejado
+                                       
         if min_val != 0.0 or max_val != 1.0:
             images = images * (max_val - min_val) + min_val
         
@@ -120,14 +120,14 @@ class ImagePreprocessor:
         """
         print("🔄 Pré-processando para MobileNetV2...")
         
-        # 1. Converter para RGB se necessário
+                                             
         if len(images.shape) == 3 or images.shape[-1] == 1:
             images = self.grayscale_to_rgb(images)
         
-        # 2. Redimensionar para 224x224
+                                       
         images = self.resize_images(images, (224, 224))
         
-        # 3. Normalizar para [0, 1]
+                                   
         images = self.normalize_images(images)
         
         print(f"✅ Pré-processamento concluído: {images.shape}")
@@ -159,10 +159,10 @@ class ImagePreprocessor:
                 "fill_mode": "nearest"
             }
         
-        # Criar gerador de augmentation
+                                       
         datagen = ImageDataGenerator(**augmentation_config)
         
-        # Aplicar augmentation
+                              
         augmented_images = []
         augmented_labels = []
         
@@ -170,11 +170,11 @@ class ImagePreprocessor:
             img = images[i]
             label = labels[i]
             
-            # Expandir dimensões para o gerador
+                                               
             img_expanded = np.expand_dims(img, axis=0)
             label_expanded = np.expand_dims(label, axis=0)
             
-            # Gerar amostra aumentada
+                                     
             aug_img, aug_label = next(datagen.flow(img_expanded, label_expanded, batch_size=1))
             
             augmented_images.append(aug_img[0])
@@ -205,13 +205,13 @@ class ImagePreprocessor:
         """
         print("📚 Preparando dados para treinamento...")
         
-        # 1. Pré-processar imagens
+                                  
         X_processed = self.preprocess_for_mobilenet(X)
         
-        # 2. Converter labels para categorical
+                                              
         y_categorical = to_categorical(y, num_classes=len(np.unique(y)))
         
-        # 3. Dividir em train/test
+                                  
         X_train, X_test, y_train, y_test = train_test_split(
             X_processed, y_categorical,
             test_size=test_size,
@@ -219,7 +219,7 @@ class ImagePreprocessor:
             stratify=y
         )
         
-        # 4. Dividir train em train/validation
+                                              
         if validation_size > 0:
             X_train, X_val, y_train, y_val = train_test_split(
                 X_train, y_train,
@@ -288,28 +288,28 @@ def preprocess_libras_images(images: np.ndarray, target_size: Tuple[int, int] = 
 
 
 if __name__ == "__main__":
-    # Exemplo de uso
+                    
     print("🧪 Testando pré-processador...")
     
-    # Criar dados sintéticos
+                            
     n_samples = 10
     original_size = (28, 28)
     target_size = (224, 224)
     
-    # Imagens em escala de cinza
+                                
     images = np.random.randint(0, 256, (n_samples, *original_size), dtype=np.uint8)
     labels = np.random.randint(0, 24, n_samples)
     
     print(f"📊 Dados de entrada: {images.shape}")
     
-    # Testar pré-processador
+                            
     preprocessor = ImagePreprocessor(target_size)
     
-    # Pré-processar para MobileNet
+                                  
     processed_images = preprocessor.preprocess_for_mobilenet(images)
     print(f"✅ Imagens processadas: {processed_images.shape}")
     
-    # Preparar dados para treinamento
+                                     
     X_train, X_val, X_test, y_train, y_val, y_test = preprocessor.prepare_training_data(
         images, labels, test_size=0.2, validation_size=0.1
     )

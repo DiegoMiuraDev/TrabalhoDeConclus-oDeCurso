@@ -39,7 +39,7 @@ class TrainingMetricsLogger(Callback):
         epoch_time = time.time() - self.epoch_start_time
         self.epoch_times.append(epoch_time)
         
-        # Calcular tempo estimado restante
+                                          
         avg_time = np.mean(self.epoch_times)
         remaining_epochs = self.params['epochs'] - (epoch + 1)
         estimated_time = avg_time * remaining_epochs
@@ -93,7 +93,7 @@ class LibrasModelTrainer:
         """
         callbacks = []
         
-        # 1. Early Stopping
+                           
         early_stop = EarlyStopping(
             monitor='val_accuracy',
             patience=early_stopping_patience,
@@ -104,7 +104,7 @@ class LibrasModelTrainer:
         callbacks.append(early_stop)
         print(f"✅ Early Stopping configurado (patience={early_stopping_patience})")
         
-        # 2. Reduce Learning Rate on Plateau
+                                            
         reduce_lr = ReduceLROnPlateau(
             monitor='val_loss',
             factor=0.5,
@@ -116,7 +116,7 @@ class LibrasModelTrainer:
         callbacks.append(reduce_lr)
         print(f"✅ Reduce LR on Plateau configurado (patience={reduce_lr_patience})")
         
-        # 3. Model Checkpoint
+                             
         if checkpoint_path:
             Path(checkpoint_path).parent.mkdir(parents=True, exist_ok=True)
             checkpoint = ModelCheckpoint(
@@ -130,7 +130,7 @@ class LibrasModelTrainer:
             callbacks.append(checkpoint)
             print(f"✅ Model Checkpoint configurado: {checkpoint_path}")
         
-        # 4. TensorBoard
+                        
         if tensorboard_log_dir:
             Path(tensorboard_log_dir).mkdir(parents=True, exist_ok=True)
             tensorboard = TensorBoard(
@@ -143,11 +143,11 @@ class LibrasModelTrainer:
             callbacks.append(tensorboard)
             print(f"✅ TensorBoard configurado: {tensorboard_log_dir}")
         
-        # 5. Custom Metrics Logger
+                                  
         metrics_logger = TrainingMetricsLogger()
         callbacks.append(metrics_logger)
         
-        # 6. Callbacks personalizados
+                                     
         if custom_callbacks:
             callbacks.extend(custom_callbacks)
             print(f"✅ {len(custom_callbacks)} callback(s) personalizado(s) adicionado(s)")
@@ -193,14 +193,14 @@ class LibrasModelTrainer:
         print(f"⚙️  Data augmentation: {use_data_augmentation}")
         print("="*60 + "\n")
         
-        # Configurar validation data
+                                    
         if X_val is not None and y_val is not None:
             validation_data = (X_val, y_val)
             validation_split = 0.0
         else:
             validation_data = None
         
-        # Data augmentation
+                           
         if use_data_augmentation:
             from tensorflow.keras.preprocessing.image import ImageDataGenerator
             
@@ -216,7 +216,7 @@ class LibrasModelTrainer:
             
             datagen.fit(X_train)
             
-            # Treinar com data augmentation
+                                           
             self.history = self.model.fit(
                 datagen.flow(X_train, y_train, batch_size=batch_size),
                 validation_data=validation_data,
@@ -226,7 +226,7 @@ class LibrasModelTrainer:
                 verbose=verbose
             )
         else:
-            # Treinar sem data augmentation
+                                           
             self.history = self.model.fit(
                 X_train, y_train,
                 validation_data=validation_data,
@@ -365,16 +365,16 @@ def train_libras_model(model: keras.Model,
     Returns:
         Tuple[keras.Model, keras.callbacks.History]: Modelo treinado e histórico
     """
-    # Criar trainer
+                   
     trainer = LibrasModelTrainer(model)
     
-    # Configurar callbacks
+                          
     trainer.setup_callbacks(
         checkpoint_path=checkpoint_path,
         early_stopping_patience=early_stopping_patience
     )
     
-    # Treinar
+             
     history = trainer.train(
         X_train=X_train,
         y_train=y_train,
@@ -389,12 +389,12 @@ def train_libras_model(model: keras.Model,
 
 
 if __name__ == "__main__":
-    # Exemplo de uso
+                    
     print("🧪 Testando módulo de treinamento...")
     
     from models.mobilenet_model import create_mobilenet_model
     
-    # Criar modelo
+                  
     model = create_mobilenet_model(
         input_shape=(224, 224, 3),
         n_classes=24,
@@ -402,31 +402,31 @@ if __name__ == "__main__":
         dense_units=128
     )
     
-    # Compilar modelo
+                     
     model.compile(
         optimizer='adam',
         loss='categorical_crossentropy',
         metrics=['accuracy']
     )
     
-    # Criar dados sintéticos
+                            
     print("\n📊 Criando dados sintéticos...")
     X_train = np.random.rand(100, 224, 224, 3).astype(np.float32)
     y_train = tf.keras.utils.to_categorical(np.random.randint(0, 24, 100), 24)
     X_val = np.random.rand(20, 224, 224, 3).astype(np.float32)
     y_val = tf.keras.utils.to_categorical(np.random.randint(0, 24, 20), 24)
     
-    # Criar trainer
+                   
     trainer = LibrasModelTrainer(model, "test_model")
     
-    # Configurar callbacks
+                          
     trainer.setup_callbacks(
         checkpoint_path="/tmp/test_model.h5",
         early_stopping_patience=3,
         reduce_lr_patience=2
     )
     
-    # Treinar por algumas épocas
+                                
     print("\n🎯 Treinando modelo de teste...")
     history = trainer.train(
         X_train=X_train,
@@ -438,7 +438,7 @@ if __name__ == "__main__":
         verbose=1
     )
     
-    # Resumo do treinamento
+                           
     print("\n📊 Resumo do Treinamento:")
     summary = trainer.get_training_summary()
     for key, value in summary.items():

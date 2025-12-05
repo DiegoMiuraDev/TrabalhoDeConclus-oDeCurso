@@ -47,7 +47,7 @@ class MobileNetLibrasModel:
         """
         print("🏗️  Construindo modelo MobileNetV2...")
         
-        # 1. Carregar modelo base pré-treinado
+                                              
         self.base_model = MobileNetV2(
             input_shape=self.input_shape,
             include_top=False,
@@ -55,32 +55,32 @@ class MobileNetLibrasModel:
             pooling='avg'
         )
         
-        # Congelar camadas do modelo base
+                                         
         self.base_model.trainable = trainable_base
         
         print(f"   Base model: MobileNetV2 (imagenet)")
         print(f"   Camadas base treináveis: {trainable_base}")
         print(f"   Total de camadas base: {len(self.base_model.layers)}")
         
-        # 2. Construir o modelo completo
+                                        
         inputs = keras.Input(shape=self.input_shape)
         
-        # Pré-processamento do MobileNetV2
+                                          
         x = preprocess_input(inputs)
         
-        # Base model
+                    
         x = self.base_model(x, training=False)
         
-        # Camadas personalizadas
+                                
         x = layers.Dense(self.dense_units, activation='relu', name='dense_1')(x)
         x = layers.Dropout(self.dropout_rate, name='dropout_1')(x)
         x = layers.Dense(self.dense_units // 2, activation='relu', name='dense_2')(x)
         x = layers.Dropout(self.dropout_rate / 2, name='dropout_2')(x)
         
-        # Camada de saída
+                         
         outputs = layers.Dense(self.n_classes, activation='softmax', name='predictions')(x)
         
-        # Criar modelo
+                      
         self.model = keras.Model(inputs, outputs, name='MobileNetV2_Libras')
         
         print(f"✅ Modelo construído com sucesso!")
@@ -99,10 +99,10 @@ class MobileNetLibrasModel:
         if self.base_model is None:
             raise ValueError("Modelo não foi construído ainda. Execute build_model() primeiro.")
         
-        # Congelar todas as camadas primeiro
+                                            
         self.base_model.trainable = True
         
-        # Descongelar apenas as últimas n camadas
+                                                 
         for layer in self.base_model.layers[:-n_layers]:
             layer.trainable = False
         
@@ -125,7 +125,7 @@ class MobileNetLibrasModel:
         if self.model is None:
             raise ValueError("Modelo não foi construído ainda. Execute build_model() primeiro.")
         
-        # Configurar otimizador
+                               
         if optimizer.lower() == 'adam':
             opt = keras.optimizers.Adam(learning_rate=learning_rate)
         elif optimizer.lower() == 'sgd':
@@ -135,7 +135,7 @@ class MobileNetLibrasModel:
         else:
             opt = optimizer
         
-        # Compilar modelo
+                         
         self.model.compile(
             optimizer=opt,
             loss=loss,
@@ -161,7 +161,7 @@ class MobileNetLibrasModel:
         from io import StringIO
         import sys
         
-        # Capturar o output do summary
+                                      
         old_stdout = sys.stdout
         sys.stdout = summary_buffer = StringIO()
         self.model.summary()
@@ -297,10 +297,10 @@ def create_mobilenet_with_config(config: dict) -> keras.Model:
 
 
 if __name__ == "__main__":
-    # Exemplo de uso
+                    
     print("🧪 Testando modelo MobileNetV2...")
     
-    # Criar modelo
+                  
     model_builder = MobileNetLibrasModel(
         input_shape=(224, 224, 3),
         n_classes=24,
@@ -308,19 +308,19 @@ if __name__ == "__main__":
         dense_units=128
     )
     
-    # Construir modelo
+                      
     model = model_builder.build_model(trainable_base=False)
     
-    # Compilar modelo
+                     
     model_builder.compile_model(learning_rate=0.001)
     
-    # Mostrar resumo
+                    
     print("\n" + "="*60)
     print("RESUMO DO MODELO")
     print("="*60)
     print(model_builder.get_model_summary())
     
-    # Testar predição com dados sintéticos
+                                          
     print("\n🧪 Testando predição...")
     test_images = np.random.rand(5, 224, 224, 3).astype(np.float32)
     predictions = model_builder.predict(test_images)

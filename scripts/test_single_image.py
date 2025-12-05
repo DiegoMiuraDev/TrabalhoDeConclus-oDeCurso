@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+                      
 """
 Script para testar UMA imagem específica com o MESMO pipeline do generate_metrics_table.py
 Usa load_model, load_labels e preprocess_image do próprio script de métricas.
@@ -8,9 +8,9 @@ import os
 from pathlib import Path
 import numpy as np
 
-import tensorflow as tf  # garante que tf esteja disponível aqui também
+import tensorflow as tf                                                
 
-# Importa funções do script de métricas
+                                       
 from scripts.generate_metrics_table import load_model, load_labels, preprocess_image
 
 
@@ -26,7 +26,7 @@ def test_single_image(image_path: str):
     print("=" * 80)
     print(f"📸 Imagem: {image_path}")
 
-    # Carregar modelo e labels usando o mesmo código do generate_metrics_table.py
+                                                                                 
     model_path = "dataset/keras_model.h5"
     if not os.path.exists(model_path):
         print(f"❌ Modelo não encontrado em: {model_path}")
@@ -37,10 +37,10 @@ def test_single_image(image_path: str):
 
     print(f"\n📋 Labels carregadas: {labels}")
 
-    # Pré-processar imagem (mesma função usada no script de métricas)
+                                                                     
     img = preprocess_image(str(image_path))
 
-    # Fazer predição
+                    
     print("\n🔮 Fazendo predição na imagem...")
     pred_proba = model.predict(img, verbose=0)[0]
     pred_idx = int(np.argmax(pred_proba))
@@ -60,7 +60,7 @@ def test_single_image(image_path: str):
 
 
 if __name__ == "__main__":
-    # Caminho padrão que você passou: A_0006.jpg
+                                                
     default_image = "dataset/test_images/A/A_0006.jpg"
     test_single_image(default_image)
 

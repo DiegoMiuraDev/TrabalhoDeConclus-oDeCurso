@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+                      
 """
 Script para testar o mapeamento real do modelo
 Testa algumas imagens conhecidas para descobrir a ordem correta das classes
@@ -11,7 +11,7 @@ import numpy as np
 import tensorflow as tf
 import cv2
 
-# Adicionar diretório raiz ao path
+                                  
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
@@ -34,7 +34,7 @@ def test_model_mapping():
     print("🔍 TESTE DE MAPEAMENTO DO MODELO")
     print("="*80)
     
-    # Carregar modelo
+                     
     model_path = "dataset/keras_model.h5"
     if not os.path.exists(model_path):
         print(f"❌ Modelo não encontrado: {model_path}")
@@ -51,7 +51,7 @@ def test_model_mapping():
         print(f"❌ Erro ao carregar modelo: {e}")
         return
     
-    # Carregar labels
+                     
     labels_path = "dataset/labels.txt"
     labels = []
     if os.path.exists(labels_path):
@@ -70,7 +70,7 @@ def test_model_mapping():
     print(f"\n📋 Labels do labels.txt: {labels}")
     print(f"   Ordem assumida: índice 0 = {labels[0]}, índice 1 = {labels[1]}, etc.")
     
-    # Testar com imagens conhecidas
+                                   
     test_dir = Path("dataset/test_images")
     if not test_dir.exists():
         print(f"\n⚠️  Diretório de teste não encontrado: {test_dir}")
@@ -80,7 +80,7 @@ def test_model_mapping():
     print(f"\n🧪 Testando com imagens conhecidas...")
     print("="*80)
     
-    # Para cada classe, testar uma imagem
+                                         
     results = {}
     for label in labels:
         label_dir = test_dir / label
@@ -88,7 +88,7 @@ def test_model_mapping():
             print(f"   ⚠️  Pasta {label}/ não encontrada - pulando")
             continue
         
-        # Pegar primeira imagem da pasta
+                                        
         image_files = list(label_dir.glob("*.jpg")) + list(label_dir.glob("*.JPG"))
         if not image_files:
             print(f"   ⚠️  Nenhuma imagem encontrada em {label}/ - pulando")
@@ -109,7 +109,7 @@ def test_model_mapping():
             else:
                 print(f"      → ⚠️  Índice {pred_idx} está fora do range de labels!")
             
-            # Mostrar todas as probabilidades
+                                             
             print(f"      Probabilidades para todas as classes:")
             for i, prob in enumerate(pred_proba):
                 label_name = labels[i] if i < len(labels) else f"Classe {i}"
@@ -126,7 +126,7 @@ def test_model_mapping():
             print(f"      ❌ Erro ao processar imagem: {e}")
             continue
     
-    # Análise final
+                   
     print("\n" + "="*80)
     print("📊 ANÁLISE DO MAPEAMENTO")
     print("="*80)

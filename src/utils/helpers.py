@@ -265,16 +265,16 @@ def create_confusion_matrix_plot(cm: np.ndarray, class_names: List[str],
 
 
 if __name__ == "__main__":
-    # Teste das funções
+                       
     print("🧪 Testando funções auxiliares...")
     
-    # Verificar GPU
+                   
     check_gpu_availability()
     
-    # Informações do sistema
+                            
     print_system_info()
     
-    # Criar estrutura de diretórios
+                                   
     create_directory_structure("/tmp/test_project")
     
     print("✅ Testes concluídos!")

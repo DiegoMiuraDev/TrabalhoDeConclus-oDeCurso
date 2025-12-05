@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+                      
 """
 Script para verificar a ordem real das classes do modelo
 Testa imagens conhecidas para descobrir qual índice corresponde a qual classe
@@ -28,7 +28,7 @@ def main():
     print("🔍 VERIFICAÇÃO DA ORDEM REAL DAS CLASSES DO MODELO")
     print("="*80)
     
-    # Carregar modelo
+                     
     model_path = "dataset/keras_model.h5"
     if not os.path.exists(model_path):
         print(f"❌ Modelo não encontrado: {model_path}")
@@ -45,7 +45,7 @@ def main():
         traceback.print_exc()
         return
     
-    # Carregar labels do labels.txt
+                                   
     labels_path = "dataset/labels.txt"
     labels_from_file = []
     if os.path.exists(labels_path):
@@ -64,7 +64,7 @@ def main():
     print(f"\n📋 Labels do labels.txt: {labels_from_file}")
     print(f"   Ordem assumida: índice 0 = {labels_from_file[0]}, índice 1 = {labels_from_file[1]}, etc.")
     
-    # Testar com imagens conhecidas
+                                   
     test_dir = Path("dataset/test_images")
     if not test_dir.exists():
         print(f"\n⚠️  Diretório de teste não encontrado: {test_dir}")
@@ -73,23 +73,23 @@ def main():
     print(f"\n🧪 Testando modelo com imagens conhecidas...")
     print("="*80)
     
-    # Mapeamento descoberto: {índice_modelo: nome_classe_real}
+                                                              
     discovered_mapping = {}
     
-    # Para cada classe, testar algumas imagens
+                                              
     for label in labels_from_file:
         label_dir = test_dir / label
         if not label_dir.exists():
             print(f"   ⚠️  Pasta {label}/ não encontrada - pulando")
             continue
         
-        # Pegar algumas imagens da pasta
+                                        
         image_files = list(label_dir.glob("*.jpg")) + list(label_dir.glob("*.JPG"))
         if not image_files:
             print(f"   ⚠️  Nenhuma imagem encontrada em {label}/ - pulando")
             continue
         
-        # Testar até 5 imagens
+                              
         test_images = image_files[:5]
         predictions = []
         
@@ -105,7 +105,7 @@ def main():
                 continue
         
         if predictions:
-            # Pegar o índice mais frequente
+                                           
             pred_indices = [p[0] for p in predictions]
             most_common_idx = max(set(pred_indices), key=pred_indices.count)
             avg_confidence = np.mean([p[1] for p in predictions if p[0] == most_common_idx])
@@ -113,7 +113,7 @@ def main():
             discovered_mapping[most_common_idx] = label
             print(f"   ✅ {label}: modelo retorna índice {most_common_idx} (confiança média: {avg_confidence:.1%})")
     
-    # Análise final
+                   
     print("\n" + "="*80)
     print("📊 MAPEAMENTO DESCOBERTO")
     print("="*80)
@@ -126,7 +126,7 @@ def main():
     for idx, label in enumerate(labels_from_file):
         print(f"      Índice {idx} = {label}")
     
-    # Verificar se há diferença
+                               
     mismatch = False
     for idx in range(n_classes):
         expected = labels_from_file[idx] if idx < len(labels_from_file) else None

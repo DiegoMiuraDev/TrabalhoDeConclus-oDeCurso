@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+                      
 """
 Script para treinar o modelo de reconhecimento de Libras
 """
@@ -7,7 +7,7 @@ import sys
 import os
 from pathlib import Path
 
-# Adicionar src ao path
+                       
 sys.path.append(str(Path(__file__).parent.parent / "src"))
 
 import numpy as np
@@ -30,34 +30,34 @@ def main():
     print("🚀 Iniciando treinamento do modelo de reconhecimento de Libras")
     print("=" * 60)
     
-    # Verificar sistema
+                       
     print_system_info()
     check_gpu_availability()
     
-    # Configurações
+                   
     data_dir = "data"
     model_save_path = "models/libras_model.h5"
     results_dir = "results"
     
-    # Criar diretórios
+                      
     Path(model_save_path).parent.mkdir(parents=True, exist_ok=True)
     Path(results_dir).mkdir(exist_ok=True)
     
     try:
-        # 1. Carregar dataset
+                             
         print("\n📊 Carregando dataset...")
         loader = LibrasDatasetLoader(data_dir)
         df = loader.load_dataset()
         
-        # Explorar dataset
+                          
         info = loader.explore_dataset()
         print(loader.get_dataset_info())
         
-        # 2. Preparar dados
+                           
         print("\n🔄 Preparando dados...")
         X, y = loader.prepare_data()
         
-        # 3. Pré-processar imagens
+                                  
         print("\n🖼️  Pré-processando imagens...")
         preprocessor = ImagePreprocessor()
         X_train, X_val, X_test, y_train, y_val, y_test = preprocessor.prepare_training_data(
@@ -66,7 +66,7 @@ def main():
             validation_size=DATASET_CONFIG["validation_split"]
         )
         
-        # 4. Criar modelo
+                         
         print("\n🏗️  Criando modelo...")
         model = create_mobilenet_model(
             input_shape=MODEL_CONFIG["input_shape"],
@@ -75,7 +75,7 @@ def main():
             dense_units=MODEL_CONFIG["dense_units"]
         )
         
-        # Compilar modelo
+                         
         model.compile(
             optimizer=Adam(learning_rate=TRAINING_CONFIG["learning_rate"]),
             loss=TRAINING_CONFIG["loss"],
@@ -84,7 +84,7 @@ def main():
         
         print(f"✅ Modelo criado com {model.count_params():,} parâmetros")
         
-        # 5. Callbacks
+                      
         callbacks = [
             EarlyStopping(
                 monitor=TRAINING_CONFIG["early_stopping"]["monitor"],
@@ -107,7 +107,7 @@ def main():
             )
         ]
         
-        # 6. Treinar modelo
+                           
         print("\n🎯 Iniciando treinamento...")
         history = model.fit(
             X_train, y_train,
@@ -118,7 +118,7 @@ def main():
             verbose=1
         )
         
-        # 7. Avaliar modelo
+                           
         print("\n📈 Avaliando modelo...")
         train_loss, train_acc = model.evaluate(X_train, y_train, verbose=0)
         val_loss, val_acc = model.evaluate(X_val, y_val, verbose=0)
@@ -129,13 +129,13 @@ def main():
         print(f"   Validação - Acurácia: {val_acc:.4f}, Perda: {val_loss:.4f}")
         print(f"   Teste - Acurácia: {test_acc:.4f}, Perda: {test_loss:.4f}")
         
-        # 8. Salvar resultados
+                              
         print("\n💾 Salvando resultados...")
         
-        # Salvar histórico
+                          
         np.save(f"{results_dir}/training_history.npy", history.history)
         
-        # Salvar métricas
+                         
         metrics = {
             'train_acc': train_acc,
             'train_loss': train_loss,
@@ -146,17 +146,17 @@ def main():
         }
         np.save(f"{results_dir}/metrics.npy", metrics)
         
-        # 9. Visualizações
+                          
         print("\n📊 Gerando visualizações...")
         visualizer = LibrasVisualizer()
         
-        # Histórico de treinamento
+                                  
         visualizer.plot_training_history(
             history.history,
             save_path=f"{results_dir}/training_history.png"
         )
         
-        # Matriz de confusão
+                            
         y_pred = model.predict(X_test)
         y_pred_classes = np.argmax(y_pred, axis=1)
         y_true_classes = np.argmax(y_test, axis=1)

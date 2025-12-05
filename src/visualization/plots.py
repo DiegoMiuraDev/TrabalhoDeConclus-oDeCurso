@@ -39,7 +39,7 @@ class LibrasVisualizer:
         """
         fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 6))
         
-        # Gráfico de barras
+                           
         classes = sorted(class_counts.keys())
         counts = [class_counts[c] for c in classes]
         class_labels = [self.class_names[c] for c in classes]
@@ -51,7 +51,7 @@ class LibrasVisualizer:
         ax1.tick_params(axis='x', rotation=45)
         ax1.grid(axis='y', alpha=0.3)
         
-        # Gráfico de pizza
+                          
         ax2.pie(counts, labels=class_labels, autopct='%1.1f%%', startangle=90)
         ax2.set_title('Proporção das Classes', fontsize=14, fontweight='bold')
         
@@ -114,7 +114,7 @@ class LibrasVisualizer:
         
         epochs = range(1, len(history['accuracy']) + 1)
         
-        # Acurácia
+                  
         ax1.plot(epochs, history['accuracy'], 'b-', label='Treino', linewidth=2)
         if 'val_accuracy' in history:
             ax1.plot(epochs, history['val_accuracy'], 'r-', label='Validação', linewidth=2)
@@ -124,7 +124,7 @@ class LibrasVisualizer:
         ax1.legend()
         ax1.grid(True, alpha=0.3)
         
-        # Perda
+               
         ax2.plot(epochs, history['loss'], 'b-', label='Treino', linewidth=2)
         if 'val_loss' in history:
             ax2.plot(epochs, history['val_loss'], 'r-', label='Validação', linewidth=2)
@@ -152,10 +152,10 @@ class LibrasVisualizer:
         """
         plt.figure(figsize=(12, 10))
         
-        # Normalizar matriz para percentuais
+                                            
         cm_normalized = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
         
-        # Criar heatmap
+                       
         sns.heatmap(cm_normalized, annot=True, fmt='.2f', cmap='Blues',
                    xticklabels=self.class_names, yticklabels=self.class_names,
                    cbar_kws={'label': 'Proporção'})
@@ -190,7 +190,7 @@ class LibrasVisualizer:
         bars = plt.bar(class_labels, accuracies, color='lightgreen', 
                       edgecolor='black', alpha=0.7)
         
-        # Adicionar valores nas barras
+                                      
         for bar, acc in zip(bars, accuracies):
             plt.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.01,
                     f'{acc:.3f}', ha='center', va='bottom', fontweight='bold')
@@ -238,7 +238,7 @@ class LibrasVisualizer:
             if i < len(images):
                 axes[row, col].imshow(images[i], cmap='gray')
                 
-                # Determinar cor baseada na acurácia
+                                                    
                 is_correct = true_labels[i] == predictions[i]
                 color = 'green' if is_correct else 'red'
                 
@@ -289,7 +289,7 @@ class LibrasVisualizer:
         """
         fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(16, 12))
         
-        # 1. Acurácia geral
+                           
         ax1.bar(['Treino', 'Validação', 'Teste'], 
                [results.get('train_acc', 0), results.get('val_acc', 0), results.get('test_acc', 0)],
                color=['blue', 'orange', 'green'], alpha=0.7)
@@ -297,14 +297,14 @@ class LibrasVisualizer:
         ax1.set_ylabel('Acurácia')
         ax1.set_ylim(0, 1)
         
-        # 2. Perda geral
+                        
         ax2.bar(['Treino', 'Validação', 'Teste'],
                [results.get('train_loss', 0), results.get('val_loss', 0), results.get('test_loss', 0)],
                color=['blue', 'orange', 'green'], alpha=0.7)
         ax2.set_title('Perda Geral', fontweight='bold')
         ax2.set_ylabel('Perda')
         
-        # 3. Top-5 classes com maior acurácia
+                                             
         if 'class_accuracy' in results:
             class_acc = results['class_accuracy']
             top_classes = sorted(class_acc.items(), key=lambda x: x[1], reverse=True)[:5]
@@ -316,7 +316,7 @@ class LibrasVisualizer:
             ax3.set_ylabel('Acurácia')
             ax3.tick_params(axis='x', rotation=45)
         
-        # 4. Top-5 classes com menor acurácia
+                                             
         if 'class_accuracy' in results:
             bottom_classes = sorted(class_acc.items(), key=lambda x: x[1])[:5]
             classes, accs = zip(*bottom_classes)
@@ -350,28 +350,28 @@ def create_visualization_report(results: Dict[str, Any],
     
     visualizer = LibrasVisualizer()
     
-    # 1. Histórico de treinamento
+                                 
     if 'history' in results:
         visualizer.plot_training_history(
             results['history'], 
             save_path=str(output_path / "training_history.png")
         )
     
-    # 2. Matriz de confusão
+                           
     if 'confusion_matrix' in results:
         visualizer.plot_confusion_matrix(
             results['confusion_matrix'],
             save_path=str(output_path / "confusion_matrix.png")
         )
     
-    # 3. Acurácia por classe
+                            
     if 'class_accuracy' in results:
         visualizer.plot_class_accuracy(
             results['class_accuracy'],
             save_path=str(output_path / "class_accuracy.png")
         )
     
-    # 4. Resumo geral
+                     
     visualizer.create_summary_plot(
         results,
         save_path=str(output_path / "summary.png")
@@ -381,27 +381,27 @@ def create_visualization_report(results: Dict[str, Any],
 
 
 if __name__ == "__main__":
-    # Exemplo de uso
+                    
     print("🧪 Testando visualizador...")
     
-    # Criar dados sintéticos
+                            
     n_classes = 24
     n_samples = 100
     
-    # Simular contagem de classes
+                                 
     class_counts = {i: np.random.randint(50, 200) for i in range(n_classes)}
     
-    # Simular imagens
+                     
     images = np.random.randint(0, 256, (n_samples, 28, 28), dtype=np.uint8)
     labels = np.random.randint(0, n_classes, n_samples)
     
-    # Testar visualizador
+                         
     visualizer = LibrasVisualizer()
     
-    # Plotar distribuição de classes
+                                    
     visualizer.plot_class_distribution(class_counts)
     
-    # Plotar amostras
+                     
     visualizer.plot_sample_images(images, labels, n_samples=8)
     
     print("✅ Teste concluído com sucesso!")

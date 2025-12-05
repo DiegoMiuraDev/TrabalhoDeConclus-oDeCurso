@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+                      
 """
 Aplicativo Desktop Melhorado para Reconhecimento de Libras
 Com detecção de mãos via MediaPipe, pré-processamento avançado e UI moderna
@@ -15,7 +15,7 @@ import os
 from collections import deque
 import math
 
-# Verificar dependências
+                        
 try:
     import tensorflow as tf
     TENSORFLOW_AVAILABLE = True
@@ -29,13 +29,13 @@ except ImportError:
     MEDIAPIPE_AVAILABLE = False
     print("MediaPipe não disponível. Instale com: pip install mediapipe")
 
-# Configurações
+               
 KERAS_MODEL_PATH = os.environ.get("KERAS_MODEL_PATH", os.path.join(os.path.dirname(__file__), "dataset", "keras_model.h5"))
 LABELS_PATH = "dataset/labels.txt"
 IMAGE_SIZE = 224
-MIN_CONFIDENCE = 0.55  # Confiança mínima para considerar no smoothing
-PREDICT_EVERY_N_FRAMES = 3  # Faz predição a cada N frames para reduzir lag
-NORMALIZATION = os.environ.get("INPUT_NORMALIZATION", "0_1")  # 0_1 ou neg1_1
+MIN_CONFIDENCE = 0.55                                                 
+PREDICT_EVERY_N_FRAMES = 3                                                 
+NORMALIZATION = os.environ.get("INPUT_NORMALIZATION", "0_1")                 
 FALLBACK_VOWEL_LABELS = ["A", "E", "I", "O", "U"]
 TFLITE_MODEL_PATH = os.environ.get("TFLITE_MODEL_PATH", os.path.join(os.path.dirname(__file__), "dataset", "model_unquant.tflite"))
 
@@ -51,7 +51,7 @@ class HandDetector:
         self.mp_hands = mp.solutions.hands
         self.hands = self.mp_hands.Hands(
             static_image_mode=False,
-            max_num_hands=1,  # Apenas uma mão
+            max_num_hands=1,                  
             min_detection_confidence=0.5,
             min_tracking_confidence=0.5
         )
@@ -134,7 +134,7 @@ class PredictionSmoother:
         if not self.prediction_buffer:
             return None, 0.0
         
-        # Conta ocorrências de cada predição
+                                            
         prediction_counts = {}
         total_confidence = 0.0
         
@@ -145,12 +145,12 @@ class PredictionSmoother:
                 prediction_counts[pred] = conf
             total_confidence += conf
         
-        # Pega predição mais frequente com maior confiança
+                                                          
         if prediction_counts:
             smoothed_pred = max(prediction_counts.items(), key=lambda x: x[1])
             avg_confidence = smoothed_pred[1] / len(self.prediction_buffer)
             
-            # Só retorna se confiança média está acima do threshold
+                                                                   
             if avg_confidence >= self.threshold:
                 return smoothed_pred[0], avg_confidence
         
@@ -163,25 +163,25 @@ class LibrasDesktopAppImproved:
         self.root.geometry("1100x850")
         self.root.configure(bg='#1a1a2e')
         
-        # Variáveis
+                   
         self.cap = None
         self.is_running = False
-        self.interpreter = None  # não utilizado quando focado em Keras
+        self.interpreter = None                                        
         self.keras_model = None
         self.use_keras = False
         self.input_details = None
         self.output_details = None
         self.labels = []
-        self.camera_index = 0  # Índice da câmera selecionada
-        self.available_cameras = []  # Lista de câmeras disponíveis
+        self.camera_index = 0                                
+        self.available_cameras = []                                
         
-        # Detector de mãos
+                          
         self.hand_detector = HandDetector()
         
-        # Suavizador de predições (maior janela para reduzir flicker)
+                                                                     
         self.prediction_smoother = PredictionSmoother(buffer_size=15, threshold=0.65)
         
-        # Histórico de predições
+                                
         self.last_prediction = None
         self.last_confidence = 0.0
         self.pending_prediction = None
@@ -190,22 +190,22 @@ class LibrasDesktopAppImproved:
         self.ema_confidence = 0.0
         self.animation_frame = 0
         
-        # Carrega labels
+                        
         self.load_labels()
         
-        # Detecta câmeras disponíveis
+                                     
         self.detect_available_cameras()
         
-        # Cria interface
+                        
         self.create_ui()
         
-        # Carrega modelo em thread separada
+                                           
         threading.Thread(target=self.load_model, daemon=True).start()
     
     def load_labels(self):
         """Carrega as labels do modelo"""
         try:
-            # Preferir labels a partir de models/libras_classes.npy
+                                                                   
             npy_path = os.path.join(os.path.dirname(__file__), "models", "libras_classes.npy")
             if os.path.exists(npy_path):
                 try:
@@ -219,7 +219,7 @@ class LibrasDesktopAppImproved:
             if os.path.exists(LABELS_PATH):
                 with open(LABELS_PATH, 'r') as f:
                     lines = f.readlines()
-                    # Processa formato "0 A" ou apenas "A"
+                                                          
                     self.labels = []
                     for line in lines:
                         parts = line.strip().split()
@@ -228,7 +228,7 @@ class LibrasDesktopAppImproved:
                         else:
                             self.labels.append(parts[0])
                 print(f"✅ Labels carregadas: {self.labels}")
-            # Se não há labels, usa fallback de vogais
+                                                      
             if not self.labels:
                 self.labels = FALLBACK_VOWEL_LABELS.copy()
                 print(f"ℹ️ Usando labels padrão: {self.labels}")
@@ -244,14 +244,14 @@ class LibrasDesktopAppImproved:
         for i in range(max_cameras_to_test):
             cap = cv2.VideoCapture(i)
             if cap.isOpened():
-                # Tentar ler um frame para confirmar que funciona
+                                                                 
                 ret, _ = cap.read()
                 if ret:
                     self.available_cameras.append(i)
                 cap.release()
         
         if not self.available_cameras:
-            # Se não encontrou nenhuma, adiciona pelo menos a 0 como padrão
+                                                                           
             self.available_cameras = [0]
         
         print(f"📹 Câmeras disponíveis: {self.available_cameras}")
@@ -265,12 +265,12 @@ class LibrasDesktopAppImproved:
         
         try:
             self.status_label.config(text="📥 Carregando modelo...")
-            # Força TFLite via variável de ambiente
+                                                   
             if os.environ.get("USE_TFLITE", "0") == "1":
                 raise RuntimeError("Forçando carregamento TFLite via USE_TFLITE=1")
             keras_path = KERAS_MODEL_PATH
             if keras_path and os.path.exists(keras_path):
-                # Wrapper de compatibilidade para modelos antigos que usam DepthwiseConv2D com 'groups'
+                                                                                                       
                 def depthwise_conv2d_compat(*args, **kwargs):
                     try:
                         kwargs.pop('groups', None)
@@ -278,7 +278,7 @@ class LibrasDesktopAppImproved:
                         pass
                     return tf.keras.layers.DepthwiseConv2D(*args, **kwargs)
 
-                # Carrega modelo Keras do Teachable Machine com compile=False e custom_objects
+                                                                                              
                 self.keras_model = tf.keras.models.load_model(
                     keras_path,
                     compile=False,
@@ -288,7 +288,7 @@ class LibrasDesktopAppImproved:
                 )
                 self.use_keras = True
                 print(f"✅ Modelo Keras carregado: {os.path.basename(keras_path)}")
-                # Ajuste dinâmico do IMAGE_SIZE conforme input do modelo
+                                                                        
                 try:
                     model_input_shape = self.keras_model.input_shape
                     if isinstance(model_input_shape, (list, tuple)) and len(model_input_shape) == 4:
@@ -303,11 +303,11 @@ class LibrasDesktopAppImproved:
                 self.start_btn.config(state=tk.NORMAL)
                 return
             
-            # Se não encontrou Keras, tenta TFLite
+                                                  
             raise FileNotFoundError("keras_model.h5 não encontrado, tentando TFLite")
             
         except Exception as e:
-            # Fallback: tentar carregar TFLite
+                                              
             try:
                 if not os.path.exists(TFLITE_MODEL_PATH):
                     raise FileNotFoundError(f"TFLite não encontrado em {TFLITE_MODEL_PATH}")
@@ -318,7 +318,7 @@ class LibrasDesktopAppImproved:
                 self.use_keras = False
                 self.status_label.config(text="✅ Modelo TFLite carregado! Clique em 'Iniciar'.")
                 print(f"✅ Modelo TFLite carregado: {os.path.basename(TFLITE_MODEL_PATH)}")
-                # Ajuste dinâmico do IMAGE_SIZE conforme input do modelo TFLite
+                                                                               
                 try:
                     shape = self.input_details[0]['shape']
                     if len(shape) == 4 and shape[1] == shape[2] and shape[1] > 0:
@@ -338,13 +338,13 @@ class LibrasDesktopAppImproved:
     def create_ui(self):
         """Cria a interface gráfica melhorada"""
         
-        # Container principal
-        main_container = tk.Frame(self.root, bg='#020617')  # fundo geral mais escuro e neutro
+                             
+        main_container = tk.Frame(self.root, bg='#020617')                                    
         main_container.pack(fill=tk.BOTH, expand=True, padx=16, pady=16)
         
-        # ==========================================
-        # HEADER
-        # ==========================================
+                                                    
+                
+                                                    
         header_frame = tk.Frame(main_container, bg='#020617', relief=tk.FLAT)
         header_frame.pack(fill=tk.X, pady=(0, 15))
         
@@ -368,13 +368,13 @@ class LibrasDesktopAppImproved:
         )
         subtitle_label.pack(pady=(0, 18))
         
-        # ==========================================
-        # CONTENT AREA (duas colunas)
-        # ==========================================
+                                                    
+                                     
+                                                    
         content_frame = tk.Frame(main_container, bg='#020617')
         content_frame.pack(fill=tk.BOTH, expand=True)
         
-        # Coluna esquerda: Vídeo
+                                
         left_column = tk.Frame(content_frame, bg='#020617')
         left_column.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=(0, 10))
         
@@ -401,7 +401,7 @@ class LibrasDesktopAppImproved:
         )
         self.video_label.pack(expand=True, fill=tk.BOTH, padx=5, pady=5)
         
-        # Indicador de detecção de mão
+                                      
         self.hand_status_label = tk.Label(
             video_frame,
             text="Nenhuma mão detectada",
@@ -412,12 +412,12 @@ class LibrasDesktopAppImproved:
         )
         self.hand_status_label.pack(fill=tk.X, padx=5, pady=(5, 0))
         
-        # Coluna direita: Resultados
+                                    
         right_column = tk.Frame(content_frame, bg='#020617', width=340)
         right_column.pack(side=tk.RIGHT, fill=tk.BOTH, padx=(10, 0))
         right_column.pack_propagate(False)
         
-        # Resultado principal (grande e animado)
+                                                
         result_main_frame = tk.LabelFrame(
             right_column,
             text="Letra reconhecida",
@@ -430,7 +430,7 @@ class LibrasDesktopAppImproved:
         )
         result_main_frame.pack(fill=tk.X, pady=(0, 10))
         
-        # Canvas para animação da letra
+                                       
         self.letter_canvas = tk.Canvas(
             result_main_frame,
             bg='#020617',
@@ -440,7 +440,7 @@ class LibrasDesktopAppImproved:
         )
         self.letter_canvas.pack(pady=10)
         
-        # Label de confiança com barra visual
+                                             
         self.confidence_frame = tk.Frame(result_main_frame, bg='#020617')
         self.confidence_frame.pack(fill=tk.X, pady=(5, 0))
         
@@ -453,7 +453,7 @@ class LibrasDesktopAppImproved:
         )
         self.confidence_label.pack()
         
-        # Barra de progresso de confiança
+                                         
         self.confidence_bar = tk.Canvas(
             self.confidence_frame,
             bg='#020617',
@@ -462,20 +462,20 @@ class LibrasDesktopAppImproved:
         )
         self.confidence_bar.pack(fill=tk.X, pady=(5, 0))
         
-        # Removido painel de "Top 3 predições" para simplificar a interface
+                                                                           
         self.predictions_frame = None
         
-        # ==========================================
-        # CONTROLS
-        # ==========================================
+                                                    
+                  
+                                                    
         controls_frame = tk.Frame(main_container, bg='#020617')
         controls_frame.pack(fill=tk.X, pady=(15, 0))
         
-        # Frame para controles de câmera
+                                        
         camera_controls_frame = tk.Frame(controls_frame, bg='#020617')
         camera_controls_frame.pack(side=tk.LEFT, padx=5)
         
-        # Label e combobox para seleção de câmera
+                                                 
         camera_label = tk.Label(
             camera_controls_frame,
             text="Câmera:",
@@ -485,7 +485,7 @@ class LibrasDesktopAppImproved:
         )
         camera_label.pack(side=tk.LEFT, padx=(0, 5))
         
-        # Criar lista de opções de câmera
+                                         
         camera_options = [f"Câmera {i}" for i in self.available_cameras]
         if not camera_options:
             camera_options = ["Câmera 0"]
@@ -536,7 +536,7 @@ class LibrasDesktopAppImproved:
         )
         self.stop_btn.pack(side=tk.LEFT, padx=5)
         
-        # Status
+                
         self.status_label = tk.Label(
             controls_frame,
             text="Carregando modelo...",
@@ -557,18 +557,18 @@ class LibrasDesktopAppImproved:
         if width <= 1 or height <= 1:
             return
         
-        # Cor baseada na confiança (verde, amarelo, vermelho suaves)
+                                                                    
         if confidence >= 0.8:
-            color = '#22c55e'  # verde
+            color = '#22c55e'         
         elif confidence >= 0.6:
-            color = '#eab308'  # amarelo
+            color = '#eab308'           
         else:
-            color = '#ef4444'  # vermelho
+            color = '#ef4444'            
         
-        # Animação de pulso
+                           
         pulse_size = 5 + math.sin(self.animation_frame * 0.3) * 3
         
-        # Desenha letra grande
+                              
         self.letter_canvas.create_text(
             width // 2,
             height // 2,
@@ -578,7 +578,7 @@ class LibrasDesktopAppImproved:
             tags="letter"
         )
         
-        # Desenha círculo de fundo animado
+                                          
         for i in range(3):
             radius = 80 + (pulse_size * i)
             alpha = 0.3 - (i * 0.1)
@@ -606,7 +606,7 @@ class LibrasDesktopAppImproved:
         
         bar_width = int(width * confidence)
         
-        # Cor baseada na confiança (mesma paleta da letra)
+                                                          
         if confidence >= 0.8:
             color = '#22c55e'
         elif confidence >= 0.6:
@@ -614,7 +614,7 @@ class LibrasDesktopAppImproved:
         else:
             color = '#ef4444'
         
-        # Desenha barra de progresso
+                                    
         self.confidence_bar.create_rectangle(
             0, 0, bar_width, height,
             fill=color,
@@ -622,7 +622,7 @@ class LibrasDesktopAppImproved:
             tags="progress"
         )
         
-        # Texto no centro
+                         
         self.confidence_bar.create_text(
             width // 2,
             height // 2,
@@ -635,7 +635,7 @@ class LibrasDesktopAppImproved:
     def on_camera_selected(self, event=None):
         """Callback quando uma câmera é selecionada"""
         selected = self.camera_var.get()
-        # Extrai o índice da câmera do texto "Câmera X"
+                                                       
         try:
             camera_num = int(selected.split()[-1])
             self.camera_index = camera_num
@@ -699,11 +699,11 @@ class LibrasDesktopAppImproved:
         self.video_label.config(image='', text="Câmera desligada")
         self.start_btn.config(state=tk.NORMAL)
         self.stop_btn.config(state=tk.DISABLED)
-        self.camera_combo.config(state="readonly")  # Reabilita seleção de câmera
+        self.camera_combo.config(state="readonly")                               
         self.status_label.config(text="Câmera desligada")
         self.hand_status_label.config(text="Nenhuma mão detectada", fg='#ff6b6b')
         
-        # Limpa exibição
+                        
         self.letter_canvas.delete("all")
         self.letter_canvas.create_text(
             self.letter_canvas.winfo_width() // 2,
@@ -715,7 +715,7 @@ class LibrasDesktopAppImproved:
         self.confidence_label.config(text="Confiança: 0%")
         self.confidence_bar.delete("all")
         
-        # Limpa predições
+                         
         for widget in self.predictions_frame.winfo_children():
             widget.destroy()
     
@@ -724,7 +724,7 @@ class LibrasDesktopAppImproved:
         if hand_roi is None or hand_roi.size == 0:
             return None
         
-        # Redimensiona mantendo aspect ratio
+                                            
         h, w = hand_roi.shape[:2]
         aspect = w / h
         
@@ -737,15 +737,15 @@ class LibrasDesktopAppImproved:
         
         resized = cv2.resize(hand_roi, (new_w, new_h))
         
-        # Cria canvas quadrado preto
+                                    
         canvas = np.zeros((IMAGE_SIZE, IMAGE_SIZE, 3), dtype=np.uint8)
         
-        # Centraliza imagem
+                           
         y_offset = (IMAGE_SIZE - new_h) // 2
         x_offset = (IMAGE_SIZE - new_w) // 2
         canvas[y_offset:y_offset+new_h, x_offset:x_offset+new_w] = resized
         
-        # Normaliza
+                   
         img_rgb = cv2.cvtColor(canvas, cv2.COLOR_BGR2RGB)
         img_normalized = img_rgb.astype(np.float32) / 255.0
         if NORMALIZATION.lower() == "neg1_1":
@@ -780,7 +780,7 @@ class LibrasDesktopAppImproved:
                 self.interpreter.set_tensor(self.input_details[0]['index'], input_data)
                 self.interpreter.invoke()
                 output_data = self.interpreter.get_tensor(self.output_details[0]['index'])[0]
-            # Aplica softmax se ainda não estiver normalizado
+                                                             
             try:
                 s = float(np.sum(output_data))
                 if not (0.99 <= s <= 1.01):
@@ -792,7 +792,7 @@ class LibrasDesktopAppImproved:
             max_idx = np.argmax(output_data)
             confidence = float(output_data[max_idx])
             
-            # Garante consistência de labels com número de saídas
+                                                                 
             if len(self.labels) != len(output_data):
                 if len(output_data) == 5:
                     self.labels = FALLBACK_VOWEL_LABELS.copy()
@@ -800,7 +800,7 @@ class LibrasDesktopAppImproved:
                     self.labels = [f"Classe {i}" for i in range(len(output_data))]
             predicted_class = self.labels[max_idx] if max_idx < len(self.labels) else str(max_idx)
             
-            # Todas as predições
+                                
             all_predictions = []
             for i, conf in enumerate(output_data):
                 if i < len(self.labels):
@@ -826,18 +826,18 @@ class LibrasDesktopAppImproved:
             self.stop_camera()
             return
         
-        # Espelha frame
+                       
         frame = cv2.flip(frame, 1)
         
-        # Detecta mão
+                     
         hand_roi, hand_landmarks, bbox = self.hand_detector.detect_and_crop_hand(frame)
         hand_detected = hand_roi is not None
         
-        # Atualiza status de detecção
+                                     
         if hand_detected:
             self.hand_status_label.config(text="Mão detectada", fg='#10b981')
             
-            # Predição a cada N frames
+                                      
             prediction = None
             confidence = 0.0
             all_predictions = []
@@ -845,16 +845,16 @@ class LibrasDesktopAppImproved:
                 processed = self.preprocess_hand_image(hand_roi)
                 prediction, confidence, all_predictions = self.predict(processed)
             
-            # Suaviza predição + histerese
+                                          
             if prediction and confidence >= MIN_CONFIDENCE:
                 self.prediction_smoother.add_prediction(prediction, confidence)
                 smoothed_pred, smoothed_conf = self.prediction_smoother.get_smoothed_prediction()
                 if smoothed_pred:
-                    # Controle de estabilidade antes de confirmar troca
+                                                                       
                     if self.last_prediction == smoothed_pred:
                         self.stable_counter = min(self.required_stable_frames, self.stable_counter + 1)
                     else:
-                        # troca rápida se confiança alta
+                                                        
                         if smoothed_conf >= 0.8:
                             self.stable_counter = self.required_stable_frames
                         else:
@@ -862,42 +862,42 @@ class LibrasDesktopAppImproved:
                         if self.stable_counter <= 0:
                             self.pending_prediction = smoothed_pred
                             self.stable_counter = 1
-                    # Confirma quando estável
+                                             
                     if self.stable_counter >= self.required_stable_frames and self.pending_prediction is not None:
                         self.last_prediction = self.pending_prediction
                         self.pending_prediction = None
-                    # EMA da confiança
+                                      
                     alpha = 0.2
                     self.ema_confidence = (1 - alpha) * self.ema_confidence + alpha * smoothed_conf
                     self.last_confidence = self.ema_confidence
 
-            # Força a letra principal a seguir a Top 1 da lista (verde)
+                                                                       
             if all_predictions:
                 top_label, top_conf = all_predictions[0]
                 self.last_prediction = top_label
                 self.last_confidence = top_conf
             
-            # Desenha landmarks no frame
+                                        
             if hand_landmarks:
                 frame = self.hand_detector.draw_landmarks(frame, hand_landmarks)
             
-            # Desenha bounding box
+                                  
             if bbox:
                 x, y, w, h = bbox
                 cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
                 cv2.putText(frame, "MAO DETECTADA", (x, y - 10),
                           cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
             
-            # Atualiza UI se houver predição confirmada
+                                                       
             if self.last_prediction and self.last_confidence >= MIN_CONFIDENCE:
-                # Desenha no frame
+                                  
                 text = f"{self.last_prediction} ({self.last_confidence*100:.1f}%)"
                 cv2.putText(frame, text, (20, 50),
                           cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0, 255, 0), 3)
             
         else:
             self.hand_status_label.config(text="Nenhuma mão detectada", fg='#ff6b6b')
-            # Usa fallback: tenta predição no frame completo a cada N frames
+                                                                            
             prediction = None
             confidence = 0.0
             all_predictions = []
@@ -926,13 +926,13 @@ class LibrasDesktopAppImproved:
                     self.ema_confidence = (1 - alpha) * self.ema_confidence + alpha * smoothed_conf
                     self.last_confidence = self.ema_confidence
 
-            # Força a letra principal a seguir a Top 1 da lista (verde) no fallback
+                                                                                   
             if all_predictions:
                 top_label, top_conf = all_predictions[0]
                 self.last_prediction = top_label
                 self.last_confidence = top_conf
         
-        # Atualiza exibição da letra
+                                    
         if self.last_prediction and self.last_confidence >= MIN_CONFIDENCE:
             self.draw_animated_letter(self.last_prediction, self.last_confidence)
             self.confidence_label.config(
@@ -941,7 +941,7 @@ class LibrasDesktopAppImproved:
             self.update_confidence_bar(self.last_confidence)
             self.update_predictions(all_predictions if hand_detected else [])
         
-        # Converte frame para exibição
+                                      
         frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         frame_pil = Image.fromarray(frame_rgb)
         frame_pil = frame_pil.resize((640, 480), Image.Resampling.LANCZOS)
@@ -950,7 +950,7 @@ class LibrasDesktopAppImproved:
         self.video_label.config(image=frame_tk, text="")
         self.video_label.image = frame_tk
         
-        # Próximo frame
+                       
         self.root.after(15, self.update_video)
     
     def update_predictions(self, predictions):

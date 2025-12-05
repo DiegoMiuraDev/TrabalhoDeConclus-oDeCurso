@@ -22,7 +22,7 @@ def setup_kaggle_api(kaggle_json_path=None):
     kaggle_dir = Path(COLAB_CONFIG["kaggle_dir"])
     kaggle_dir.mkdir(exist_ok=True)
     
-    # Copiar arquivo kaggle.json
+                                
     if os.path.exists(kaggle_json_path):
         shutil.copy2(kaggle_json_path, kaggle_dir / "kaggle.json")
         os.chmod(kaggle_dir / "kaggle.json", 0o600)
@@ -50,16 +50,16 @@ def download_dataset(dataset_name, output_dir=None):
     if output_dir is None:
         output_dir = COLAB_CONFIG["data_dir"]
     
-    # Criar diretório se não existir
+                                    
     Path(output_dir).mkdir(exist_ok=True)
     
-    # Comando para download
+                           
     cmd = f"kaggle datasets download -d {dataset_name} -p {output_dir}"
     
     print(f"📥 Baixando dataset: {dataset_name}")
     print(f"📁 Destino: {output_dir}")
     
-    # Executar comando
+                      
     result = os.system(cmd)
     
     if result == 0:
@@ -98,14 +98,14 @@ def extract_dataset(zip_path, extract_to=None):
 
 
 if __name__ == "__main__":
-    # Exemplo de uso
+                    
     print("🔧 Configurando Kaggle API...")
     
     if setup_kaggle_api():
         print("📥 Baixando dataset Libras MNIST...")
         download_dataset("datamoon/libras-mnist")
         
-        # Extrair arquivo
+                         
         zip_file = Path(COLAB_CONFIG["data_dir"]) / "libras-mnist.zip"
         if zip_file.exists():
             extract_dataset(str(zip_file))

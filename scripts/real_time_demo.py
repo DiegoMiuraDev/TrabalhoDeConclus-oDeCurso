@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+                      
 """
 Script para demonstração em tempo real do reconhecimento de Libras
 """
@@ -7,7 +7,7 @@ import sys
 import os
 from pathlib import Path
 
-# Adicionar src ao path
+                       
 sys.path.append(str(Path(__file__).parent.parent / "src"))
 
 import cv2
@@ -38,7 +38,7 @@ class LibrasRealTimeRecognizer:
         self.prediction_interval = REALTIME_CONFIG["prediction_interval"]
         self.frame_count = 0
         
-        # Carregar modelo
+                         
         self.load_model()
     
     def load_model(self):
@@ -63,19 +63,19 @@ class LibrasRealTimeRecognizer:
         Returns:
             np.ndarray: Frame pré-processado
         """
-        # Converter para escala de cinza
+                                        
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         
-        # Redimensionar para 224x224
+                                    
         resized = resize_image(gray, (224, 224))
         
-        # Converter para RGB
+                            
         rgb = grayscale_to_rgb(resized)
         
-        # Normalizar
+                    
         normalized = normalize_image(rgb, 0.0, 1.0)
         
-        # Adicionar dimensão de batch
+                                     
         processed = np.expand_dims(normalized, axis=0)
         
         return processed
@@ -90,13 +90,13 @@ class LibrasRealTimeRecognizer:
         Returns:
             tuple: (classe_predita, confiança)
         """
-        # Pré-processar frame
+                             
         processed_frame = self.preprocess_frame(frame)
         
-        # Fazer predição
+                        
         predictions = self.model.predict(processed_frame, verbose=0)
         
-        # Obter classe e confiança
+                                  
         class_idx = np.argmax(predictions[0])
         confidence = predictions[0][class_idx]
         
@@ -115,22 +115,22 @@ class LibrasRealTimeRecognizer:
         Returns:
             np.ndarray: Frame com predição desenhada
         """
-        # Obter nome da classe
+                              
         class_name = self.class_names[class_idx]
         
-        # Determinar cor baseada na confiança
+                                             
         if confidence >= self.confidence_threshold:
-            color = (0, 255, 0)  # Verde
+            color = (0, 255, 0)         
             status = "ALTO"
         else:
-            color = (0, 0, 255)  # Vermelho
+            color = (0, 0, 255)            
             status = "BAIXO"
         
-        # Desenhar retângulo de fundo
+                                     
         cv2.rectangle(frame, (10, 10), (400, 100), (0, 0, 0), -1)
         cv2.rectangle(frame, (10, 10), (400, 100), color, 2)
         
-        # Desenhar texto
+                        
         cv2.putText(frame, f"Letra: {class_name}", (20, 40), 
                    cv2.FONT_HERSHEY_SIMPLEX, 1, color, 2)
         cv2.putText(frame, f"Confianca: {confidence:.3f}", (20, 70), 
@@ -152,7 +152,7 @@ class LibrasRealTimeRecognizer:
         print("   - Pressione 's' para salvar frame")
         print("=" * 50)
         
-        # Inicializar câmera
+                            
         cap = cv2.VideoCapture(REALTIME_CONFIG["camera_index"])
         cap.set(cv2.CAP_PROP_FRAME_WIDTH, REALTIME_CONFIG["frame_width"])
         cap.set(cv2.CAP_PROP_FRAME_HEIGHT, REALTIME_CONFIG["frame_height"])
@@ -161,19 +161,19 @@ class LibrasRealTimeRecognizer:
             print("❌ Erro ao abrir câmera")
             return
         
-        # Variáveis para controle
+                                 
         last_prediction = None
         last_confidence = 0.0
         
         try:
             while True:
-                # Capturar frame
+                                
                 ret, frame = cap.read()
                 if not ret:
                     print("❌ Erro ao capturar frame")
                     break
                 
-                # Fazer predição a cada N frames
+                                                
                 if self.frame_count % self.prediction_interval == 0:
                     try:
                         class_idx, confidence = self.predict(frame)
@@ -182,24 +182,24 @@ class LibrasRealTimeRecognizer:
                     except Exception as e:
                         print(f"⚠️  Erro na predição: {e}")
                 
-                # Desenhar predição
+                                   
                 if last_prediction is not None:
                     frame = self.draw_prediction(frame, last_prediction, last_confidence)
                 
-                # Desenhar instruções
+                                     
                 cv2.putText(frame, "Pressione 'q' para sair, 's' para salvar", 
                            (10, frame.shape[0] - 20), cv2.FONT_HERSHEY_SIMPLEX, 
                            0.6, (255, 255, 255), 1)
                 
-                # Mostrar frame
+                               
                 cv2.imshow('Reconhecimento de Libras', frame)
                 
-                # Controle de teclado
+                                     
                 key = cv2.waitKey(1) & 0xFF
                 if key == ord('q'):
                     break
                 elif key == ord('s'):
-                    # Salvar frame
+                                  
                     filename = f"captured_frame_{self.frame_count}.jpg"
                     cv2.imwrite(filename, frame)
                     print(f"📸 Frame salvo: {filename}")
@@ -210,7 +210,7 @@ class LibrasRealTimeRecognizer:
             print("\n⏹️  Interrompido pelo usuário")
         
         finally:
-            # Limpar recursos
+                             
             cap.release()
             cv2.destroyAllWindows()
             print("✅ Reconhecimento finalizado")
@@ -223,7 +223,7 @@ def main():
     print("🚀 Sistema de Reconhecimento de Libras em Tempo Real")
     print("=" * 60)
     
-    # Verificar se o modelo existe
+                                  
     model_path = "models/libras_model.h5"
     if not Path(model_path).exists():
         print(f"❌ Modelo não encontrado: {model_path}")
@@ -232,10 +232,10 @@ def main():
         return
     
     try:
-        # Criar reconhecedor
+                            
         recognizer = LibrasRealTimeRecognizer(model_path)
         
-        # Executar reconhecimento
+                                 
         recognizer.run()
         
     except Exception as e:
