@@ -1,0 +1,85 @@
+###############################
+# Arquivos e pastas do Python #
+###############################
+
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+.Python
+
+########################
+# Ambientes virtuais   #
+########################
+
+venv/
+venv312_mp/
+.venv/
+env/
+
+########################
+# Jupyter / Notebooks  #
+########################
+
+.ipynb_checkpoints/
+*.nbconvert.ipynb
+
+########################
+# Configurações locais #
+########################
+
+.env
+.env.*
+*.log
+logs/
+
+########################
+# Dados e datasets     #
+########################
+
+# Pasta genérica de dados (ajuste se quiser versionar algo específico)
+data/
+
+# Dataset de imagens e modelos exportados (remova linhas se quiser versionar)
+dataset/
+
+########################
+# Modelos treinados    #
+########################
+
+models/*.h5
+models/*.hdf5
+models/*.ckpt
+models/checkpoints/
+
+########################
+# Resultados / saídas  #
+########################
+
+results/*.npy
+results/*.npz
+results/*.png
+results/*.jpg
+results/*.jpeg
+
+########################
+# Ferramentas / IDE    #
+########################
+
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+########################
+# Outros               #
+########################
+
+*.tmp
+*.bak
+*.swp
+*.swo
+
+
