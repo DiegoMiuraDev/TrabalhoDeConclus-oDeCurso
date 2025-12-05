@@ -1,0 +1,33 @@
+# Ambiente Python / caches
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+.venv/
+venv/
+venv312_mp/
+
+# Ferramentas / IDE
+.vscode/
+.idea/
+.DS_Store
+
+# Logs e resultados gerados
+logs/
+results/
+
+# Dados pesados / modelos
+data/
+dataset/keras_model.h5
+dataset/model_unquant.tflite
+dataset/test_images/
+models/*.h5
+models/*.npy
+models/*.bak
+
+# Arquivos temporários
+*.tmp
+*.log
+
+

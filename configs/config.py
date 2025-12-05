@@ -44,36 +44,103 @@ MODEL_CONFIG = {
     "final_activation": "softmax"
 }
 
-# Configurações de Treinamento
-TRAINING_CONFIG = {
-    "epochs": 50,
-    "batch_size": 32,
-    "learning_rate": 0.001,
+# Configurações de Treinamento MELHORADAS
+IMPROVED_TRAINING_CONFIG = {
+    "epochs": 100,  # Aumentado de 50 para 100
+    "batch_size": 16,  # Reduzido para melhor generalização
+    "learning_rate": 0.0001,  # Reduzido para treinamento mais estável
     "optimizer": "adam",
     "loss": "categorical_crossentropy",
     "metrics": ["accuracy"],
+    "weight_decay": 1e-4,  # NOVO: regularização L2
     "early_stopping": {
         "monitor": "val_accuracy",
-        "patience": 10,
+        "patience": 15,  # Aumentado de 10 para 15
         "restore_best_weights": True
     },
     "reduce_lr": {
         "monitor": "val_loss",
-        "factor": 0.5,
-        "patience": 5,
+        "factor": 0.3,  # Mais agressivo que 0.5
+        "patience": 8,  # Aumentado de 5 para 8
         "min_lr": 1e-7
+    },
+    "cosine_scheduler": True  # NOVO: scheduler de LR
+}
+
+# Configurações para diferentes arquiteturas
+MODEL_ARCHITECTURES = {
+    "mobilenet_v2": {
+        "base_model": "MobileNetV2",
+        "input_shape": (224, 224, 3),
+        "include_top": False,
+        "weights": "imagenet",
+        "pooling": "avg",
+        "dense_units": [256, 128],
+        "dropout_rate": 0.5
+    },
+    "efficientnet": {
+        "base_model": "EfficientNetB0",
+        "input_shape": (224, 224, 3),
+        "include_top": False,
+        "weights": "imagenet",
+        "pooling": "avg",
+        "dense_units": [256, 128],
+        "dropout_rate": 0.5
+    },
+    "resnet": {
+        "base_model": "ResNet50V2",
+        "input_shape": (224, 224, 3),
+        "include_top": False,
+        "weights": "imagenet",
+        "pooling": "avg",
+        "dense_units": [256, 128],
+        "dropout_rate": 0.5
     }
 }
 
-# Configurações de Data Augmentation
+# Configurações de Otimização de Hiperparâmetros
+HYPERPARAMETER_OPTIMIZATION = {
+    "n_trials": 50,
+    "direction": "maximize",
+    "pruner": "MedianPruner",
+    "study_name": "libras_recognition_optimization",
+    "timeout": 3600,  # 1 hora máximo por trial
+    "parameters": {
+        "learning_rate": {"type": "float", "low": 1e-5, "high": 1e-2, "log": True},
+        "batch_size": {"type": "categorical", "choices": [16, 32, 64]},
+        "dropout_rate": {"type": "float", "low": 0.2, "high": 0.7},
+        "dense_units_1": {"type": "categorical", "choices": [64, 128, 256, 512]},
+        "dense_units_2": {"type": "categorical", "choices": [32, 64, 128, 256]},
+        "optimizer": {"type": "categorical", "choices": ["adam", "sgd", "rmsprop"]},
+        "model_type": {"type": "categorical", "choices": ["mobilenet_v2", "efficientnet"]}
+    }
+}
+
+# Configurações de Data Augmentation MELHORADAS
 AUGMENTATION_CONFIG = {
-    "rotation_range": 15,
-    "width_shift_range": 0.1,
-    "height_shift_range": 0.1,
-    "shear_range": 0.1,
-    "zoom_range": 0.1,
+    "rotation_range": 20,  # Aumentado de 15 para 20
+    "width_shift_range": 0.15,  # Aumentado de 0.1 para 0.15
+    "height_shift_range": 0.15,  # Aumentado de 0.1 para 0.15
+    "shear_range": 0.15,  # Aumentado de 0.1 para 0.15
+    "zoom_range": 0.2,  # Aumentado de 0.1 para 0.2
+    "brightness_range": [0.8, 1.2],  # NOVO: variação de brilho
+    "channel_shift_range": 0.1,  # NOVO: variação de canal
     "horizontal_flip": False,  # Não fazer flip para sinais de mão
     "fill_mode": "nearest"
+}
+
+# Configurações de Data Augmentation AVANÇADAS
+ADVANCED_AUGMENTATION_CONFIG = {
+    "rotation_range": 25,
+    "width_shift_range": 0.2,
+    "height_shift_range": 0.2,
+    "shear_range": 0.2,
+    "zoom_range": 0.25,
+    "brightness_range": [0.7, 1.3],
+    "channel_shift_range": 0.15,
+    "horizontal_flip": False,
+    "fill_mode": "nearest",
+    "rescale": 1./255
 }
 
 # Configurações de Visualização
