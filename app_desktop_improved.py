@@ -27,7 +27,7 @@ try:
     MEDIAPIPE_AVAILABLE = True
 except ImportError:
     MEDIAPIPE_AVAILABLE = False
-    print("⚠️ MediaPipe não disponível. Instale com: pip install mediapipe")
+    print("MediaPipe não disponível. Instale com: pip install mediapipe")
 
 # Configurações
 KERAS_MODEL_PATH = os.environ.get("KERAS_MODEL_PATH", os.path.join(os.path.dirname(__file__), "dataset", "keras_model.h5"))
@@ -163,7 +163,7 @@ class PredictionSmoother:
 class LibrasDesktopAppImproved:
     def __init__(self, root):
         self.root = root
-        self.root.title("🤟 Reconhecimento de Libras - Versão Melhorada")
+        self.root.title("INTELIGÊNCIA ARTIFICIAL E VISÃO COMPUTACIONAL PARA RECONHECIMENTO AUTOMÁTICO DE LIBRAS")
         self.root.geometry("1100x850")
         self.root.configure(bg='#1a1a2e')
         
@@ -264,7 +264,7 @@ class LibrasDesktopAppImproved:
         """Carrega exclusivamente o modelo Keras (.h5) do diretório dataset/"""
         global IMAGE_SIZE
         if not TENSORFLOW_AVAILABLE:
-            self.status_label.config(text="❌ TensorFlow não disponível")
+            self.status_label.config(text="TensorFlow não disponível")
             return
         
         try:
@@ -343,53 +343,53 @@ class LibrasDesktopAppImproved:
         """Cria a interface gráfica melhorada"""
         
         # Container principal
-        main_container = tk.Frame(self.root, bg='#1a1a2e')
-        main_container.pack(fill=tk.BOTH, expand=True, padx=15, pady=15)
+        main_container = tk.Frame(self.root, bg='#020617')  # fundo geral mais escuro e neutro
+        main_container.pack(fill=tk.BOTH, expand=True, padx=16, pady=16)
         
         # ==========================================
         # HEADER
         # ==========================================
-        header_frame = tk.Frame(main_container, bg='#16213e', relief=tk.FLAT)
+        header_frame = tk.Frame(main_container, bg='#020617', relief=tk.FLAT)
         header_frame.pack(fill=tk.X, pady=(0, 15))
         
         title_label = tk.Label(
             header_frame,
-            text="🤟 Reconhecimento de Libras - IA Avançada",
-            font=("Segoe UI", 26, "bold"),
-            bg='#16213e',
-            fg='#ffffff',
+            text="INTELIGÊNCIA ARTIFICIAL E VISÃO COMPUTACIONAL PARA RECONHECIMENTO AUTOMÁTICO DE LIBRAS",
+            font=("Segoe UI", 20, "bold"),
+            bg='#020617',
+            fg='#e5e7eb',
             padx=25,
-            pady=18
+            pady=14
         )
         title_label.pack()
         
         subtitle_label = tk.Label(
             header_frame,
-            text="Detecção de Mãos + Reconhecimento em Tempo Real",
-            font=("Segoe UI", 11),
-            bg='#16213e',
-            fg='#7d9bc1'
+            text="Aplicação de inteligência artificial e visão computacional para reconhecimento de sinais estáticos de Libras",
+            font=("Segoe UI", 10),
+            bg='#020617',
+            fg='#9ca3af'
         )
         subtitle_label.pack(pady=(0, 18))
         
         # ==========================================
         # CONTENT AREA (duas colunas)
         # ==========================================
-        content_frame = tk.Frame(main_container, bg='#1a1a2e')
+        content_frame = tk.Frame(main_container, bg='#020617')
         content_frame.pack(fill=tk.BOTH, expand=True)
         
         # Coluna esquerda: Vídeo
-        left_column = tk.Frame(content_frame, bg='#1a1a2e')
+        left_column = tk.Frame(content_frame, bg='#020617')
         left_column.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=(0, 10))
         
         video_frame = tk.LabelFrame(
             left_column,
-            text="📷 Câmera ao Vivo",
-            font=("Segoe UI", 13, "bold"),
-            bg='#0f3460',
-            fg='#ffffff',
-            padx=12,
-            pady=12,
+            text="Câmera ao vivo",
+            font=("Segoe UI", 12, "bold"),
+            bg='#020617',
+            fg='#e5e7eb',
+            padx=10,
+            pady=10,
             relief=tk.FLAT
         )
         video_frame.pack(fill=tk.BOTH, expand=True)
@@ -397,8 +397,8 @@ class LibrasDesktopAppImproved:
         self.video_label = tk.Label(
             video_frame,
             text="Aguardando inicialização da câmera...",
-            bg='#000000',
-            fg='#ffffff',
+            bg='#020617',
+            fg='#e5e7eb',
             font=("Segoe UI", 12),
             width=50,
             height=25
@@ -408,28 +408,28 @@ class LibrasDesktopAppImproved:
         # Indicador de detecção de mão
         self.hand_status_label = tk.Label(
             video_frame,
-            text="🔴 Nenhuma mão detectada",
-            bg='#0f3460',
-            fg='#ff6b6b',
+            text="Nenhuma mão detectada",
+            bg='#020617',
+            fg='#f97316',
             font=("Segoe UI", 10),
             anchor='w'
         )
         self.hand_status_label.pack(fill=tk.X, padx=5, pady=(5, 0))
         
         # Coluna direita: Resultados
-        right_column = tk.Frame(content_frame, bg='#1a1a2e', width=350)
+        right_column = tk.Frame(content_frame, bg='#020617', width=340)
         right_column.pack(side=tk.RIGHT, fill=tk.BOTH, padx=(10, 0))
         right_column.pack_propagate(False)
         
         # Resultado principal (grande e animado)
         result_main_frame = tk.LabelFrame(
             right_column,
-            text="🎯 Letra Reconhecida",
-            font=("Segoe UI", 13, "bold"),
-            bg='#0f3460',
-            fg='#ffffff',
-            padx=15,
-            pady=15,
+            text="Letra reconhecida",
+            font=("Segoe UI", 12, "bold"),
+            bg='#020617',
+            fg='#e5e7eb',
+            padx=12,
+            pady=12,
             relief=tk.FLAT
         )
         result_main_frame.pack(fill=tk.X, pady=(0, 10))
@@ -437,68 +437,55 @@ class LibrasDesktopAppImproved:
         # Canvas para animação da letra
         self.letter_canvas = tk.Canvas(
             result_main_frame,
-            bg='#0a2647',
+            bg='#020617',
             width=300,
-            height=180,
+            height=170,
             highlightthickness=0
         )
         self.letter_canvas.pack(pady=10)
         
         # Label de confiança com barra visual
-        self.confidence_frame = tk.Frame(result_main_frame, bg='#0f3460')
+        self.confidence_frame = tk.Frame(result_main_frame, bg='#020617')
         self.confidence_frame.pack(fill=tk.X, pady=(5, 0))
         
         self.confidence_label = tk.Label(
             self.confidence_frame,
             text="Confiança: 0%",
             font=("Segoe UI", 14),
-            fg='#ffffff',
-            bg='#0f3460'
+            fg='#e5e7eb',
+            bg='#020617'
         )
         self.confidence_label.pack()
         
         # Barra de progresso de confiança
         self.confidence_bar = tk.Canvas(
             self.confidence_frame,
-            bg='#0a2647',
+            bg='#020617',
             height=25,
             highlightthickness=0
         )
         self.confidence_bar.pack(fill=tk.X, pady=(5, 0))
         
-        # Top 3 predições
-        predictions_frame = tk.LabelFrame(
-            right_column,
-            text="📊 Top 3 Predições",
-            font=("Segoe UI", 13, "bold"),
-            bg='#0f3460',
-            fg='#ffffff',
-            padx=15,
-            pady=15,
-            relief=tk.FLAT
-        )
-        predictions_frame.pack(fill=tk.BOTH, expand=True)
-        
-        self.predictions_frame = tk.Frame(predictions_frame, bg='#0a2647')
-        self.predictions_frame.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
+        # Removido painel de "Top 3 predições" para simplificar a interface
+        self.predictions_frame = None
         
         # ==========================================
         # CONTROLS
         # ==========================================
-        controls_frame = tk.Frame(main_container, bg='#1a1a2e')
+        controls_frame = tk.Frame(main_container, bg='#020617')
         controls_frame.pack(fill=tk.X, pady=(15, 0))
         
         # Frame para controles de câmera
-        camera_controls_frame = tk.Frame(controls_frame, bg='#1a1a2e')
+        camera_controls_frame = tk.Frame(controls_frame, bg='#020617')
         camera_controls_frame.pack(side=tk.LEFT, padx=5)
         
         # Label e combobox para seleção de câmera
         camera_label = tk.Label(
             camera_controls_frame,
-            text="📹 Câmera:",
+            text="Câmera:",
             font=("Segoe UI", 11),
-            fg='#ffffff',
-            bg='#1a1a2e'
+            fg='#e5e7eb',
+            bg='#020617'
         )
         camera_label.pack(side=tk.LEFT, padx=(0, 5))
         
@@ -523,23 +510,23 @@ class LibrasDesktopAppImproved:
         
         self.start_btn = tk.Button(
             controls_frame,
-            text="▶️ Iniciar Câmera",
+            text="Iniciar câmera",
             command=self.start_camera,
             font=("Segoe UI", 13, "bold"),
-            bg='#10b981',
+            bg='#2563eb',
             fg='white',
             padx=30,
             pady=14,
             relief=tk.FLAT,
             cursor='hand2',
             state=tk.DISABLED,
-            activebackground='#059669'
+            activebackground='#1d4ed8'
         )
         self.start_btn.pack(side=tk.LEFT, padx=5)
         
         self.stop_btn = tk.Button(
             controls_frame,
-            text="⏹️ Parar",
+            text="Parar",
             command=self.stop_camera,
             font=("Segoe UI", 13, "bold"),
             bg='#ef4444',
@@ -556,10 +543,10 @@ class LibrasDesktopAppImproved:
         # Status
         self.status_label = tk.Label(
             controls_frame,
-            text="⏳ Carregando modelo...",
+            text="Carregando modelo...",
             font=("Segoe UI", 11),
-            fg='#94a3b8',
-            bg='#1a1a2e',
+            fg='#9ca3af',
+            bg='#020617',
             anchor='w'
         )
         self.status_label.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=15)
@@ -574,13 +561,13 @@ class LibrasDesktopAppImproved:
         if width <= 1 or height <= 1:
             return
         
-        # Cor baseada na confiança
+        # Cor baseada na confiança (verde, amarelo, vermelho suaves)
         if confidence >= 0.8:
-            color = '#10b981'  # Verde
+            color = '#22c55e'  # verde
         elif confidence >= 0.6:
-            color = '#f59e0b'  # Laranja
+            color = '#eab308'  # amarelo
         else:
-            color = '#ef4444'  # Vermelho
+            color = '#ef4444'  # vermelho
         
         # Animação de pulso
         pulse_size = 5 + math.sin(self.animation_frame * 0.3) * 3
@@ -623,11 +610,11 @@ class LibrasDesktopAppImproved:
         
         bar_width = int(width * confidence)
         
-        # Cor baseada na confiança
+        # Cor baseada na confiança (mesma paleta da letra)
         if confidence >= 0.8:
-            color = '#10b981'
+            color = '#22c55e'
         elif confidence >= 0.6:
-            color = '#f59e0b'
+            color = '#eab308'
         else:
             color = '#ef4444'
         
@@ -702,7 +689,7 @@ class LibrasDesktopAppImproved:
             self.start_btn.config(state=tk.DISABLED)
             self.stop_btn.config(state=tk.NORMAL)
             self.camera_combo.config(state=tk.DISABLED)  # Desabilita durante uso
-            self.status_label.config(text=f"🟢 Câmera {self.camera_index} ativa - Posicione sua mão na frente da câmera")
+            self.status_label.config(text=f"Câmera {self.camera_index} ativa - posicione sua mão na frente da câmera")
             
             self.update_video()
             
@@ -721,8 +708,8 @@ class LibrasDesktopAppImproved:
         self.start_btn.config(state=tk.NORMAL)
         self.stop_btn.config(state=tk.DISABLED)
         self.camera_combo.config(state="readonly")  # Reabilita seleção de câmera
-        self.status_label.config(text="⚫ Câmera desligada")
-        self.hand_status_label.config(text="🔴 Nenhuma mão detectada", fg='#ff6b6b')
+        self.status_label.config(text="Câmera desligada")
+        self.hand_status_label.config(text="Nenhuma mão detectada", fg='#ff6b6b')
         
         # Limpa exibição
         self.letter_canvas.delete("all")
@@ -856,7 +843,7 @@ class LibrasDesktopAppImproved:
         
         # Atualiza status de detecção
         if hand_detected:
-            self.hand_status_label.config(text="🟢 Mão detectada!", fg='#10b981')
+            self.hand_status_label.config(text="Mão detectada", fg='#10b981')
             
             # Predição a cada N frames
             prediction = None
@@ -917,7 +904,7 @@ class LibrasDesktopAppImproved:
                           cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0, 255, 0), 3)
             
         else:
-            self.hand_status_label.config(text="🔴 Nenhuma mão detectada", fg='#ff6b6b')
+            self.hand_status_label.config(text="Nenhuma mão detectada", fg='#ff6b6b')
             # Usa fallback: tenta predição no frame completo a cada N frames
             prediction = None
             confidence = 0.0
@@ -975,55 +962,12 @@ class LibrasDesktopAppImproved:
         self.root.after(15, self.update_video)
     
     def update_predictions(self, predictions):
-        """Atualiza lista de predições"""
-        # Limpa anteriores
-        for widget in self.predictions_frame.winfo_children():
-            widget.destroy()
-        
-        if not predictions:
-            return
-        
-        # Mostra top 3
-        for i, (class_name, conf) in enumerate(predictions[:3]):
-            # Cores
-            if i == 0:
-                bg_color = '#10b981'
-                text_color = '#ffffff'
-                border_color = '#059669'
-            elif i == 1:
-                bg_color = '#f59e0b'
-                text_color = '#ffffff'
-                border_color = '#d97706'
-            else:
-                bg_color = '#6b7280'
-                text_color = '#ffffff'
-                border_color = '#4b5563'
-            
-            item_frame = tk.Frame(
-                self.predictions_frame,
-                bg=bg_color,
-                relief=tk.FLAT,
-                borderwidth=2
-            )
-            item_frame.pack(fill=tk.X, padx=5, pady=5, ipady=8)
-            
-            tk.Label(
-                item_frame,
-                text=class_name,
-                font=("Segoe UI", 14, "bold" if i == 0 else "normal"),
-                bg=bg_color,
-                fg=text_color,
-                anchor='w'
-            ).pack(side=tk.LEFT, padx=15, pady=5)
-            
-            tk.Label(
-                item_frame,
-                text=f"{conf*100:.1f}%",
-                font=("Segoe UI", 12, "bold" if i == 0 else "normal"),
-                bg=bg_color,
-                fg=text_color,
-                anchor='e'
-            ).pack(side=tk.RIGHT, padx=15, pady=5)
+        """
+        Método mantido por compatibilidade, mas a interface não exibe mais
+        a lista de predições. A letra principal e a confiança já são mostradas
+        no painel à direita.
+        """
+        return
 
 def main():
     """Função principal"""
@@ -1047,10 +991,10 @@ def main():
 
 if __name__ == '__main__':
     print("=" * 70)
-    print("🤟 Aplicativo Desktop Melhorado - Reconhecimento de Libras")
+    print("Aplicativo Desktop - Reconhecimento Automático de Libras")
     print("=" * 70)
     if not MEDIAPIPE_AVAILABLE:
-        print("⚠️ AVISO: MediaPipe não está instalado.")
+        print("AVISO: MediaPipe não está instalado.")
         print("   Instale com: pip install mediapipe")
         print("   O app funcionará sem detecção de mãos (modo fallback)")
         print()
