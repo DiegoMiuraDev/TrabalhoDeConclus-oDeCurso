@@ -42,17 +42,7 @@ logs/
 # Pasta genérica de dados (ajuste se quiser versionar algo específico)
 data/
 
-# Dataset de imagens e modelos exportados (remova linhas se quiser versionar)
-dataset/
 
-########################
-# Modelos treinados    #
-########################
-
-models/*.h5
-models/*.hdf5
-models/*.ckpt
-models/checkpoints/
 
 ########################
 # Resultados / saídas  #
